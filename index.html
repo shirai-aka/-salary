@@ -571,9 +571,14 @@
     <script>
         let timeList = [];
         let currentResult = null;
-        let savedResults = [];
+        let savedResults = JSON.parse(localStorage.getItem('savedResults')) || [];
 
-        // 初期化（メモリ内でのみデータを保持）
+        // データの永続化
+        function saveData() {
+            localStorage.setItem('savedResults', JSON.stringify(savedResults));
+        }
+
+        // 初期化
         window.onload = function() {
             updateSavedList();
         };
@@ -765,8 +770,9 @@
             };
 
             savedResults.unshift(savedData);
+            saveData();
             
-            alert('保存しました！（このセッション中のみ有効）');
+            alert('保存しました！');
             document.getElementById('saveName').value = '';
             
             // 保存データタブに切り替え
@@ -827,6 +833,7 @@
         function deleteSaved(id) {
             if (confirm('このデータを削除しますか？')) {
                 savedResults = savedResults.filter(item => item.id !== id);
+                saveData();
                 updateSavedList();
             }
         }
